@@ -136,7 +136,16 @@ dmypy.json
 !**/migrations/__init__.py
 
 # media file
-media/
+# Ignore everything under media
+media/**
+
+# Unignore the base folder (parent of icon)
+!media/base/
+!media/base/icon/
+!media/base/icon/**
+
+# Optional: ignore other system files
+*.DS_Store
 
 #collected static files
 staticfiles/

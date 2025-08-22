@@ -10230,15 +10230,14 @@ select.oh-select--lg {
 }
 
 .oh-sidebar {
-  background-color: hsl(0, 0%, 13%);
-  color: hsl(0, 0%, 100%);
-  max-width: 250px;
-  min-height: 100vh;
-  height: 100%;
-  overflow-y: auto;
-  position: fixed;
-  left: 0;
-  z-index: 99;
+background-color: hsl(0.9deg 85.6% 17.05% / 96%);
+    color: hsl(0, 0%, 100%);
+    max-width: 230px;
+    min-height: 100vh;
+    height: 100%;
+    overflow-y: auto;
+    left: 0;
+    z-index: 99;
 }
 
 .oh-sidebar__company {

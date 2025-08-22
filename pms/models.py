@@ -38,7 +38,7 @@ class KeyResult(HorillaModel):
     PROGRESS_CHOICES = (
         ("%", _("Percentage")),
         ("#", _("Number")),
-        ("Currency", (("$", "USD$"), ("₹", "INR"), ("€", "EUR"))),
+        ("Currency", (("$", "USD$"), ("৳", "BDT"), ("€", "EUR"))),
     )
     title = models.CharField(
         max_length=60, null=True, blank=False, verbose_name="Title"
@@ -288,7 +288,7 @@ class EmployeeKeyResult(models.Model):
     PROGRESS_CHOICES = (
         ("%", _("Percentage")),
         ("#", _("Number")),
-        ("Currency", (("$", "USD$"), ("₹", "INR"), ("€", "EUR"))),
+        ("Currency", (("$", "USD$"), ("৳", "BDT"), ("€", "EUR"))),
     )
     STATUS_CHOICES = (
         ("On Track", _("On Track")),

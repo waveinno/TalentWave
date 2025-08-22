@@ -1091,7 +1091,7 @@
       "created_by": null,
       "modified_by": null,
       "is_active": true,
-      "currency_symbol": "$",
+      "currency_symbol": "৳",
       "position": "postfix",
       "company_id": null
     }
