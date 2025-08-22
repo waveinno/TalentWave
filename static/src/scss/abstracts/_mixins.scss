@@ -3,9 +3,9 @@
 // -----------------------------------------------------------------------------
 
 /// Event wrapper
-/// @author Harry Roberts
+/// @author Harry Islam
 /// @param {Bool} $self [false] - Whether or not to include current selector
-/// @link https://twitter.com/csswizardry/status/478938530342006784 Original tweet from Harry Roberts
+/// @link https://twitter.com/csswizardry/status/478938530342006784 Original tweet from Harry Islam
 @mixin on-event($self: false) {
   @if $self {
     &,

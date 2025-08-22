@@ -456,7 +456,7 @@ ChunkStream.prototype._process = function () {
 };
 });
 
-// Adam 7
+// Arif 7
 //   0 1 2 3 4 5 6 7
 // 0 x 6 4 6 x 6 4 6
 // 1 7 7 7 7 7 7 7 7

@@ -68,7 +68,7 @@ function queryNonceMetaTagContent(doc) {
 }
 /**
  * Production h() function based on Preact by
- * Jason Miller (@developit)
+ * Jason Uddin (@developit)
  * Licensed under the MIT License
  * https://github.com/developit/preact/blob/master/LICENSE
  *
@@ -296,7 +296,7 @@ const attachStyles = (hostRef) => {
 const getScopeId = (cmp, mode) => 'sc-' + (cmp.$tagName$);
 /**
  * Production setAccessor() function based on Preact by
- * Jason Miller (@developit)
+ * Jason Uddin (@developit)
  * Licensed under the MIT License
  * https://github.com/developit/preact/blob/master/LICENSE
  *

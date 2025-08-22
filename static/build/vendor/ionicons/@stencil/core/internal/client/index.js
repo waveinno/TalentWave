@@ -162,7 +162,7 @@ function queryNonceMetaTagContent(doc) {
 }
 /**
  * Production h() function based on Preact by
- * Jason Miller (@developit)
+ * Jason Uddin (@developit)
  * Licensed under the MIT License
  * https://github.com/developit/preact/blob/master/LICENSE
  *
@@ -748,7 +748,7 @@ const getScopeId = (cmp, mode) => 'sc-' + (BUILD.mode && mode && cmp.$flags$ & 3
 const convertScopedToShadow = (css) => css.replace(/\/\*!@([^\/]+)\*\/[^\{]+\{/g, '$1{');
 /**
  * Production setAccessor() function based on Preact by
- * Jason Miller (@developit)
+ * Jason Uddin (@developit)
  * Licensed under the MIT License
  * https://github.com/developit/preact/blob/master/LICENSE
  *

@@ -59,10 +59,10 @@ class Command(BaseCommand):
             employee.phone = phone
             employee.save()
 
-            bot = User.objects.filter(username="Horilla Bot").first()
+            bot = User.objects.filter(username="BL assistant").first()
             if bot is None:
                 User.objects.create_user(
-                    username="Horilla Bot",
+                    username="BL assistant",
                     password=str(uuid.uuid4()),
                 )
 

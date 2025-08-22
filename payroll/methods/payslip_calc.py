@@ -85,7 +85,7 @@ tets = {
         },
         {
             "allowance_id": 13,
-            "title": "Bonus point Redeem for Adam Luis ",
+            "title": "Bonus point Redeem for Arif Hossain ",
             "is_taxable": True,
             "amount": 75.0,
         },

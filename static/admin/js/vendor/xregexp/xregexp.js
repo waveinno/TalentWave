@@ -3898,14 +3898,14 @@ XRegExp.matchChain = function(str, chain) {
  *
  * // Regex search, using named backreferences in replacement string
  * var name = XRegExp('(?<first>\\w+) (?<last>\\w+)');
- * XRegExp.replace('John Smith', name, '${last}, ${first}');
- * // -> 'Smith, John'
+ * XRegExp.replace('John Karim', name, '${last}, ${first}');
+ * // -> 'Karim, John'
  *
  * // Regex search, using named backreferences in replacement function
- * XRegExp.replace('John Smith', name, function(match) {
+ * XRegExp.replace('John Karim', name, function(match) {
  *   return match.last + ', ' + match.first;
  * });
- * // -> 'Smith, John'
+ * // -> 'Karim, John'
  *
  * // String search, with replace-all
  * XRegExp.replace('RegExp builds RegExps', 'RegExp', 'XRegExp', 'all');
