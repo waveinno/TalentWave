@@ -1,0 +1,58 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'ai_agent/chat_widget.css' %}">
+
+<div id="ai-assistant" class="fixed top-4 right-4 z-50 flex flex-col items-end font-sans">
+
+  <button id="ai-toggle-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl font-bold">
+    💬
+  </button>
+
+  <div id="ai-chat-window" class="hidden mt-2 w-80 bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col">
+    <div class="bg-indigo-600 text-white p-2 font-bold flex justify-between items-center cursor-pointer select-none">
+      <span>HR Assistant</span>
+      <button id="ai-close-btn" class="text-white font-bold hover:text-gray-200">✖</button>
+    </div>
+    <div id="ai-stream" class="h-64 overflow-y-auto p-2 text-gray-800 text-sm flex-1 bg-gray-50"></div>
+    <form hx-post="{% url 'ai_agent_chat' %}" hx-target="#ai-stream" hx-swap="beforeend" class="flex p-2 gap-2">
+      <input type="hidden" name="conversation_id" value="{{ conversation.id|default:'' }}">
+      <input name="message" class="flex-1 border rounded p-1 text-sm" placeholder="Ask: leave, payslip, etc."/>
+      <button type="submit" class="bg-indigo-600 text-white px-3 rounded hover:bg-indigo-700 text-sm">Send</button>
+    </form>
+  </div>
+</div>
+<script>
+  document.body.addEventListener('htmx:afterOnLoad', e=>{
+    const box = document.getElementById('ai-stream'); 
+    const data = e.detail.xhr.response;
+    if (!data) return;
+
+    let messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'assistant-message');
+
+    let bubble = document.createElement('div');
+    bubble.classList.add('bubble');
+    bubble.textContent = data.answer;
+
+    messageDiv.appendChild(bubble);
+    box.appendChild(messageDiv);
+    box.scrollTop = box.scrollHeight;
+  });
+
+  // User message formatting
+  document.querySelector('form').addEventListener('submit', e => {
+    const input = e.target.querySelector('input[name="message"]');
+    if (!input.value) return;
+
+    const box = document.getElementById('ai-stream');
+    let messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', 'user-message');
+
+    let bubble = document.createElement('div');
+    bubble.classList.add('bubble');
+    bubble.textContent = input.value;
+
+    messageDiv.appendChild(bubble);
+    box.appendChild(messageDiv);
+    box.scrollTop = box.scrollHeight;
+  });
+</script>

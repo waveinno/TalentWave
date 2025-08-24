@@ -177,6 +177,7 @@
                         <!-- End of profile dropdown in nav bar -->
                     </div>
                 </div>
+                
                 <!-- Start of quick access in index page -->
                 {% include "floating_button.html" %}
                 <!-- End of quick access in index page -->
@@ -217,9 +218,33 @@
                 </div>
             </div>
             <!-- End of main section -->
+             <!-- {% include "ai_agent/chat_widget.html" %} -->
         </div>
     </div>
 
+    <style>
+        .woot-widget-bubble.woot-elements--right {
+    right: 7px !important;
+    bottom: 100px !important;
+}
+    </style>
+
+         <script>
+  (function(d,t) {
+    var BASE_URL="https://chat.digix.chat";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.defer = true;
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: 'UkydjgYQi9eQ7QiGVMS7CRUx',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+</script>
     <!--htmx script -->
     <script src="{% static 'build/js/web.frontend.min.js' %}"></script>
     <script src="{% static 'htmx/htmx.min.js' %}"></script>

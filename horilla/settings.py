@@ -69,6 +69,8 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_apscheduler",
 ]
+INSTALLED_APPS += ["ai_agent"]
+
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
