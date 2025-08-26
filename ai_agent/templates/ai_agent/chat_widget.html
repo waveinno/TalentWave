@@ -1,58 +1,142 @@
-{% load static %}
+ {% load static %}
 <link rel="stylesheet" href="{% static 'ai_agent/chat_widget.css' %}">
 
-<div id="ai-assistant" class="fixed top-4 right-4 z-50 flex flex-col items-end font-sans">
+<style>
+/* Existing styles... */
+.aiagent-fab { position: fixed !important; right: 20px; bottom: 20px; z-index: 2147483647 !important; }
+.aiagent-btn { background: linear-gradient(135deg,#f16522,#f1ae8f); border: 0; padding: 14px 18px; border-radius: 999px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+.aiagent-panel { position: fixed !important; right: 20px; bottom: 80px; width: 350px; max-height: 70vh; background: hsl(19.42deg 68.8% 88.82%); color: #fff; border-radius: 16px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.3); z-index: 2147483647 !important; }
+.aiagent-panel.open {display: flex;}
+.aiagent-head { padding: 12px; background: #f16522; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+.aiagent-body { flex: 1 1 auto; overflow-y: auto; padding: 12px; max-height: calc(52vh - 100px); min-height: 150px; }
+.aiagent-msg {margin-bottom: 10px;}
+.aiagent-user {text-align: right;}
+.aiagent-ai {text-align: left;}
+.aiagent-bubble { display: inline-block; padding: 8px 12px; border-radius: 12px; max-width: 80%; }
+.aiagent-user .aiagent-bubble {background: #27354d;}
+.aiagent-ai .aiagent-bubble {background: #27354d;}
+.aiagent-footer { display: flex; flex-direction: column; padding: 10px; gap: 8px; background:  hsl(19.42deg 68.8% 88.82%); }
+.aiagent-input { flex: 1; border-radius: 12px; border: 1px solid #f16522; background: #f6dccf; color: #090909; padding: 8px; width: 100%; }
+.aiagent-send { background: #f16522; border: 0; padding: 8px 14px; border-radius: 12px; cursor: pointer; margin-top: 4px; }
+.aiagent-loadmore { background: none; color: #f16522; border: 0; cursor: pointer; margin: 10px auto; display: block; }
+#bl-ai-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+#bl-ai-actions button { flex: 1 1 48%; background: #27354d; color: #fff; border: 0; padding: 6px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+#bl-ai-actions button:hover { background: #3a4a65; }
+</style>
 
-  <button id="ai-toggle-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl font-bold">
-    💬
-  </button>
+<div class="aiagent-fab">
+  <button class="aiagent-btn" id="aiagentOpenBtn">🤖 Ask BL AI</button>
+</div>
 
-  <div id="ai-chat-window" class="hidden mt-2 w-80 bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col">
-    <div class="bg-indigo-600 text-white p-2 font-bold flex justify-between items-center cursor-pointer select-none">
-      <span>HR Assistant</span>
-      <button id="ai-close-btn" class="text-white font-bold hover:text-gray-200">✖</button>
+<div class="aiagent-panel" id="aiagentPanel">
+  <div class="aiagent-head">
+    BL AI — HR Assistant
+    <button id="aiagentCloseBtn" style="background:none;border:0;color:#aaa;cursor:pointer;">✕</button>
+  </div>
+  <div class="aiagent-body" id="aiagentBody">
+    <button id="aiagentLoadMore" class="aiagent-loadmore" style="display:none;">View More</button>
+    <div id="aiagentMessages"></div>
+  </div>
+  <div class="aiagent-footer">
+    <div id="bl-ai-actions">
+      <!-- <button onclick="sendQuick('My Leave Balance')">Leave Balance</button>
+      <button onclick="sendQuick('Last Payslip')">Last Payslip</button>
+      <button onclick="sendQuick('Attendance Summary')">Attendance</button>
+      <button onclick="sendQuick('My Assigned Assets')">Assigned Assets</button>
+      <button onclick="sendQuick('My Asset Requests')">Asset Requests</button>
+      <button onclick="sendQuick('Available Asset Categories')">Asset Categories</button> -->
+      <!-- <button onclick="sendQuick('My Employee Info')">My Info</button> -->
     </div>
-    <div id="ai-stream" class="h-64 overflow-y-auto p-2 text-gray-800 text-sm flex-1 bg-gray-50"></div>
-    <form hx-post="{% url 'ai_agent_chat' %}" hx-target="#ai-stream" hx-swap="beforeend" class="flex p-2 gap-2">
-      <input type="hidden" name="conversation_id" value="{{ conversation.id|default:'' }}">
-      <input name="message" class="flex-1 border rounded p-1 text-sm" placeholder="Ask: leave, payslip, etc."/>
-      <button type="submit" class="bg-indigo-600 text-white px-3 rounded hover:bg-indigo-700 text-sm">Send</button>
-    </form>
+    <input class="aiagent-input" id="aiagentInput" placeholder="Ask BL HR AI anything...">
+    <button class="aiagent-send" id="aiagentSend">Send</button>
   </div>
 </div>
+
 <script>
-  document.body.addEventListener('htmx:afterOnLoad', e=>{
-    const box = document.getElementById('ai-stream'); 
-    const data = e.detail.xhr.response;
-    if (!data) return;
+const panel = document.getElementById("aiagentPanel");
+const messagesEl = document.getElementById("aiagentMessages");
+const bodyEl = document.getElementById("aiagentBody");
+let historyPage = 1;
+let hasNext = false;
+let historyLoaded = false;
 
-    let messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'assistant-message');
+// CSRF helper
+function getCookie(name){
+  const m = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
 
-    let bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    bubble.textContent = data.answer;
+// Scroll to bottom
+function scrollToBottom() { bodyEl.scrollTop = bodyEl.scrollHeight; }
 
-    messageDiv.appendChild(bubble);
-    box.appendChild(messageDiv);
-    box.scrollTop = box.scrollHeight;
+// Load history
+async function loadHistory(initial=false){
+  const res = await fetch(`/ai-agent/history/?page=${historyPage}`);
+  const data = await res.json();
+  if(data.messages){
+    let html = "";
+    data.messages.forEach(m => {
+      html += `<div class='aiagent-msg ${m.role==="user"?"aiagent-user":"aiagent-ai"}'>
+                 <div class='aiagent-bubble'>${m.content}</div>
+               </div>`;
+    });
+    messagesEl.innerHTML = html + messagesEl.innerHTML;
+    hasNext = data.has_next;
+    document.getElementById("aiagentLoadMore").style.display = hasNext ? "block" : "none";
+  }
+  if(initial) scrollToBottom();
+}
+
+// Open / Close panel
+document.getElementById("aiagentOpenBtn").onclick = () => {
+  panel.classList.add("open");
+  if(!historyLoaded){
+    loadHistory(true);
+    historyLoaded = true;
+  }
+};
+document.getElementById("aiagentCloseBtn").onclick = () => panel.classList.remove("open");
+
+// Load more history
+document.getElementById("aiagentLoadMore").onclick = () => {
+  if(hasNext){ historyPage++; loadHistory(); }
+};
+
+// Send chat message
+async function sendMsg(msg=null){
+  const input = document.getElementById("aiagentInput");
+  if(msg===null) msg = input.value.trim();
+  if(!msg) return;
+
+  messagesEl.innerHTML += `<div class='aiagent-msg aiagent-user'>
+                             <div class='aiagent-bubble'>${msg}</div>
+                           </div>`;
+  input.value = "";
+  const typingId = "typing_" + Date.now();
+  messagesEl.innerHTML += `<div class='aiagent-msg aiagent-ai' id='${typingId}'>
+                             <div class='aiagent-bubble'><i>BL AI HR is typing...</i></div>
+                           </div>`;
+  scrollToBottom();
+
+  const res = await fetch("/ai-agent/chat/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
+    body: JSON.stringify({message: msg})
   });
+  const data = await res.json();
+  document.getElementById(typingId)?.remove();
+  messagesEl.innerHTML += `<div class='aiagent-msg aiagent-ai'>
+                             <div class='aiagent-bubble'>${data.reply || '⚠️ Error'}</div>
+                           </div>`;
+  scrollToBottom();
+}
 
-  // User message formatting
-  document.querySelector('form').addEventListener('submit', e => {
-    const input = e.target.querySelector('input[name="message"]');
-    if (!input.value) return;
+// Quick action helper
+function sendQuick(msg){ sendMsg(msg); }
 
-    const box = document.getElementById('ai-stream');
-    let messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'user-message');
-
-    let bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    bubble.textContent = input.value;
-
-    messageDiv.appendChild(bubble);
-    box.appendChild(messageDiv);
-    box.scrollTop = box.scrollHeight;
-  });
+// Send button & Enter key
+document.getElementById("aiagentSend").onclick = () => sendMsg();
+document.getElementById("aiagentInput").addEventListener("keydown", e => {
+  if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMsg(); }
+});
 </script>

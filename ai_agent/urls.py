@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import chat, widget_page
+from .views import AdvancedAIAgentChatView, AIAgentHistoryView
 
 urlpatterns = [
-    path("chat", chat, name="ai_agent_chat"),
-    path("widget", widget_page, name="ai_agent_widget")
+     path("chat/", AdvancedAIAgentChatView.as_view(), name="ai_agent_chat"),
+    path("history/", AIAgentHistoryView.as_view(), name="ai_agent_history"),
 ]

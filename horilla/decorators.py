@@ -52,6 +52,26 @@ def permission_required(function, perm):
     return _function
 
 
+
+def permission_required_any(*perms):
+    def decorator(function):
+        def _function(request, *args, **kwargs):
+            # ✅ allow if user has at least one of the perms
+            if any(request.user.has_perm(perm) for perm in perms):
+                return function(request, *args, **kwargs)
+
+            
+            messages.info(request, "You don't have permission.")
+            previous_url = request.META.get("HTTP_REFERER", "/")
+            if "HTTP_HX_REQUEST" in request.META:  # HTMX request
+                return render(request, "decorator_404.html")
+            script = f'<script>window.location.href = "{previous_url}"</script>'
+            return HttpResponse(script)
+
+        return _function
+    return decorator
+
+
 @decorator_with_arguments
 def any_permission_required(function, perms):
     def _function(request, *args, **kwargs):

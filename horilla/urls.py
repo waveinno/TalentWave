@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     path("i18n/", include("django.conf.urls.i18n")),
     path("health/", health_check),
-    path("ai/", include("ai_agent.urls")),
+    path("ai-agent/", include("ai_agent.urls")),
 
 ]
 

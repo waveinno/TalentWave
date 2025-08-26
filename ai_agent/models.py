@@ -1,14 +1,17 @@
 from django.db import models
 from django.conf import settings
 
-class AiConversation(models.Model):
+
+class AIAgentLog(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200, blank=True)
+    question = models.TextField()
+    answer = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-class AiMessage(models.Model):
-    ROLE_CHOICES = [("user","user"),("assistant","assistant"),("tool","tool")]
-    conversation = models.ForeignKey(AiConversation, on_delete=models.CASCADE, related_name="messages")
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+
+    def __str__(self):
+        return f"{self.user} @ {self.created_at:%Y-%m-%d %H:%M}: {self.question[:40]}..."
